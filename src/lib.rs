@@ -146,14 +146,15 @@ impl<Token: PartialEq + Clone> Parser<Token> {
 				Err(err) => return Err(err)
 			};
 			let start = next_group.start;
+
+			if next_group.end - next_group.start < 3 {
+				return Err("Found parenthesis without internal expression".to_owned());
+			}
 			
 			// include grouper operators to remove from tokens
 			let grouped_tokens: Vec<ExpressionElement<Token>> = expression_list.drain(next_group).collect();
 			// remove grouper operators when evaluating inner expression
 			let mut grouped_tokens: Vec<ExpressionElement<Token>> = grouped_tokens[1..&grouped_tokens.len() - 1].to_vec();
-			if grouped_tokens.len() == 2 {
-				return Err("Found parenthesis without internal expression".to_owned());
-			}
 
 			match self.internal_parse(&mut grouped_tokens) {
 				Ok(expression) => {
