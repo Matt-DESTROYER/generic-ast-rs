@@ -1,6 +1,12 @@
 [package]
 name = "generic-ast-rs"
-version = "0.1.0"
+version = "1.0.0"
 edition = "2024"
+license = "MIT"
+description = "A lightweight, drop-in, generic operator-precedence parser for building Abstract Syntax Trees."
+readme = "README.md"
+repository = "https://github.com/Matt-DESTROYER/generic-ast-rs"
+keywords = ["ast", "parser", "parsing", "tree"]
+categories = ["algorithms", "compilers", "parser-implementations"]
 
 [dependencies]

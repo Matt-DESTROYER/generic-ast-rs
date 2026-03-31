@@ -15,16 +15,23 @@ pub struct Expression<Token: PartialEq + Clone> {
 
 pub struct Parser<Token: PartialEq + Clone> {
 	operators: Vec<Vec<Token>>,
-	open_grouper: Token,
-	close_grouper: Token
+	open_grouper: Option<Token>,
+	close_grouper: Option<Token>
 }
 
 impl<Token: PartialEq + Clone> Parser<Token> {
-	pub fn new(operators: Vec<Vec<Token>>, open_grouper: Token, close_grouper: Token) -> Self {
+	pub fn new() -> Self {
+		Self {
+			operators: Vec::new(),
+			open_grouper: None,
+			close_grouper: None
+		}
+	}
+	pub fn init(operators: Vec<Vec<Token>>, open_grouper: Token, close_grouper: Token) -> Self {
 		Self {
 			operators,
-			open_grouper,
-			close_grouper
+			open_grouper: Some(open_grouper),
+			close_grouper: Some(close_grouper)
 		}
 	}
 
@@ -32,8 +39,23 @@ impl<Token: PartialEq + Clone> Parser<Token> {
 		let operators: Vec<Token> = operators.to_vec();
 		self.operators.push(operators);
 	}
+	pub fn set_open_grouper(&mut self, token: Token) {
+		self.open_grouper = Some(token.clone());
+	}
+	pub fn set_close_grouper(&mut self, token: Token) {
+		self.close_grouper = Some(token.clone());
+	}
 
 	fn find_next_group(&self, expression_list: &mut Vec<ExpressionElement<Token>>) -> Result<Option<Range<usize>>, String> {
+		let open_grouper = match &self.open_grouper {
+			Some(grouper) => grouper,
+			None => return Ok(None)
+		};
+		let close_grouper = match &self.close_grouper {
+			Some(grouper) => grouper,
+			None => return Ok(None)
+		};
+
 		let mut i = 0;
 
 		while i < expression_list.len() {
@@ -44,7 +66,7 @@ impl<Token: PartialEq + Clone> Parser<Token> {
 				},
 				ExpressionElement::Token(token) => {
 					let token = token.clone();
-					if token == self.open_grouper {
+					if token == *open_grouper {
 						let start_idx = i;
 						i += 1;
 						let mut inner_counter = 1;
@@ -53,9 +75,9 @@ impl<Token: PartialEq + Clone> Parser<Token> {
 								return Err("Could not resolve unclosed grouped expression".to_owned());
 							}
 
-							if let ExpressionElement::Token(token) = &expression_list[i] && *token == self.open_grouper {
+							if let ExpressionElement::Token(token) = &expression_list[i] && *token == *open_grouper {
 								inner_counter += 1;
-							} else if let ExpressionElement::Token(token) = &expression_list[i] && *token == self.close_grouper {
+							} else if let ExpressionElement::Token(token) = &expression_list[i] && *token == *close_grouper {
 								inner_counter -= 1;
 							}
 
@@ -66,7 +88,7 @@ impl<Token: PartialEq + Clone> Parser<Token> {
 							i += 1;
 						}
 
-						if let ExpressionElement::Token(token) = &expression_list[i] && *token != self.close_grouper {
+						if let ExpressionElement::Token(token) = &expression_list[i] && *token != *close_grouper {
 							continue;
 						}
 
