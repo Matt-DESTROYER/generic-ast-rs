@@ -67,6 +67,7 @@ fn test_standard_precedence() {
 	assert_eq!(result, expected);
 }
 
+#[test]
 fn test_grouping_overrides_precedence() {
 	let parser = setup_math_parser();
 
