@@ -1,4 +1,4 @@
-use generic_ast::{Parser, ExpressionElement, Expression};
+use generic_ast::{Parser, ExpressionElement, BinaryExpression};
 
 #[derive(Clone, PartialEq, Debug)]
 pub enum Token {
@@ -20,7 +20,7 @@ fn expr(
 	op: Token,
 	rhs: ExpressionElement<Token>
 ) -> ExpressionElement<Token> {
-	ExpressionElement::Expression(Box::new(Expression {
+	ExpressionElement::BinaryExpression(Box::new(BinaryExpression {
 		lhs,
 		operator: op,
 		rhs
