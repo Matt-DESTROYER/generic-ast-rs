@@ -1,12 +1,12 @@
 use std::ops::Range;
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum ExpressionElement<Token: PartialEq + Clone> {
 	Expression(Box<Expression<Token>>),
 	Token(Token)
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Expression<Token: PartialEq + Clone> {
 	pub lhs: ExpressionElement<Token>,
 	pub operator: Token,
@@ -115,7 +115,7 @@ impl<Token: PartialEq + Clone> Parser<Token> {
 				if i == 0 {
 					return Err("Dangling operator without LHS found".to_owned())
 				} else if i == expression_list.len() - 1 {
-					return  Err("Dangling operator without RHS found".to_owned());
+					return Err("Dangling operator without RHS found".to_owned());
 				}
 				i -= 1;
 

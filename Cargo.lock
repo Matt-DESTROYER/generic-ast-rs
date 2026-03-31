@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "generic-ast-rs"
+name = "generic-ast"
 version = "1.0.0"
