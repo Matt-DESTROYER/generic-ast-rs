@@ -5,12 +5,29 @@ pub enum OpType<Token: PartialEq + Clone> {
 	Unary(Token),
 	Binary(Token)
 }
+impl<Token: PartialEq + Clone> OpType<Token> {
+	pub fn to_token(&self) -> Token {
+		match self {
+			OpType::Unary(token) => token.clone(),
+			OpType::Binary(token) => token.clone()
+		}
+	}
+}
 
 #[derive(Clone, Debug, PartialEq)]
 pub enum ExpressionElement<Token: PartialEq + Clone> {
 	UnaryExpression(Box<UnaryExpression<Token>>),
 	BinaryExpression(Box<BinaryExpression<Token>>),
 	Token(Token)
+}
+impl<Token: PartialEq + Clone> ExpressionElement<Token> {
+	pub fn is_token(&self) -> bool {
+		if let ExpressionElement::Token(_) = self {
+			true
+		} else {
+			false
+		}
+	}
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -31,7 +48,6 @@ pub struct Parser<Token: PartialEq + Clone> {
 	open_grouper: Option<Token>,
 	close_grouper: Option<Token>
 }
-
 impl<Token: PartialEq + Clone> Parser<Token> {
 	pub fn new() -> Self {
 		Self {
