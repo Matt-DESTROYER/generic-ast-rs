@@ -1,4 +1,4 @@
-use generic_ast::{Parser, ExpressionElement, Expression};
+use generic_ast::{Parser, ExpressionElement, BinaryExpression, OpType};
 
 #[derive(Clone, PartialEq, Debug)]
 pub enum Token {
@@ -20,7 +20,7 @@ fn expr(
 	op: Token,
 	rhs: ExpressionElement<Token>
 ) -> ExpressionElement<Token> {
-	ExpressionElement::Expression(Box::new(Expression {
+	ExpressionElement::BinaryExpression(Box::new(BinaryExpression {
 		lhs,
 		operator: op,
 		rhs
@@ -33,8 +33,17 @@ fn setup_math_parser() -> Parser<Token> {
 	parser.set_open_grouper(Token::OpenBracket);
 	parser.set_close_grouper(Token::CloseBracket);
 
-	parser.add_precedence_level(&[Token::Multiply, Token::Divide]);
-	parser.add_precedence_level(&[Token::Add, Token::Subtract]);
+	parser.add_precedence_level(&[
+		OpType::Unary(Token::Subtract)
+	]);
+	parser.add_precedence_level(&[
+		OpType::Binary(Token::Multiply),
+		OpType::Binary(Token::Divide)
+	]);
+	parser.add_precedence_level(&[
+		OpType::Binary(Token::Add),
+		OpType::Binary(Token::Subtract)
+	]);
 
 	parser
 }
